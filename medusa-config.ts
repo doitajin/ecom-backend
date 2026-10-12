@@ -15,11 +15,15 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 const googleAuthEnabled =
   !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET
 const redisUrl = process.env.REDIS_URL
+const databaseUrl = process.env.DATABASE_URL || 'postgres://localhost:5432/medusa'
 
 module.exports = defineConfig({
   projectConfig: {
-    databaseUrl: process.env.DATABASE_URL,
+    databaseUrl: databaseUrl,
     redisUrl,
+    databaseDriverOptions: {
+      ssl: process.env.DATABASE_SSL === 'true',
+    },
     workerMode: (process.env.MEDUSA_WORKER_MODE || process.env.WORKER_MODE ||
       'shared') as 'shared' | 'server' | 'worker',
     http: {
