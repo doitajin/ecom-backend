@@ -377,19 +377,6 @@ module.exports = defineConfig({
       },
     },
     {
-      // Quantity / volume tiered pricing. Registers its own `pricingEngine`
-      // module (and the `quantity_prices` table via that module's migrations),
-      // so it must NOT also appear under `modules`.
-      //
-      // Note: creating tiers does not by itself change cart prices - the plugin
-      // leaves line items alone. A tier only takes effect once the add-to-cart
-      // flow calls the exported `resolveQuantityUnitPrice`.
-      //
-      // This store trades in OMR only, so rules need `currency_code: 'omr'`.
-      resolve: '@webbycrown/medusa-quantity-pricing-rules',
-      options: {},
-    },
-    {
       // Admin-only analytics dashboard: prebuilt admin route (`/app/analytics`),
       // three list-page widgets (orders/products/customers), and
       // `/admin/agilo-analytics/*` API routes. Registers no module of its own,
