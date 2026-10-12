@@ -45,7 +45,7 @@
     "@webbycrown/medusa-quantity-pricing-rules": "^1.0.2",
     "nodemailer": "^10.0.15",
     "react-i18next": "13.5.0",
-    "react-router-dom": "7.18.2",
+    "react-router-dom": "6.30.6",
     "zod": "4.2.0"
   },
   "devDependencies": {
