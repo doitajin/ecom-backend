@@ -1,0 +1,20 @@
+providers = ["node"]
+
+[variables]
+NODE_ENV = "production"
+
+[phases.setup]
+nixPkgs = ["nodejs_22", "npm"]
+
+[phases.install]
+cmds = [
+  "npm install --include=dev",
+]
+
+[phases.build]
+cmds = [
+  "npm run build",
+]
+
+[start]
+cmd = "PORT=${PORT:-9000} npm run start"
