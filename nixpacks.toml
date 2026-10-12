@@ -17,4 +17,4 @@ cmds = [
 ]
 
 [start]
-cmd = "cd .medusa/server && npm run start:deploy"
+cmd = "cd .medusa/server && npm run predeploy && npm run start"
