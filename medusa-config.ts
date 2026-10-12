@@ -14,11 +14,14 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 // configured (or a fresh clone with an empty .env) still starts normally.
 const googleAuthEnabled =
   !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET
+const redisUrl = process.env.REDIS_URL
 
 module.exports = defineConfig({
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
-    redisUrl: process.env.REDIS_URL,
+    redisUrl,
+    workerMode: (process.env.MEDUSA_WORKER_MODE || process.env.WORKER_MODE ||
+      'shared') as 'shared' | 'server' | 'worker',
     http: {
       storeCors: process.env.STORE_CORS!,
       adminCors: process.env.ADMIN_CORS!,
@@ -28,6 +31,8 @@ module.exports = defineConfig({
     }
   },
   admin: {
+    backendUrl: process.env.MEDUSA_BACKEND_URL,
+    disable: process.env.DISABLE_MEDUSA_ADMIN === 'true',
     vite: () => ({
       plugins: [
         {
@@ -264,25 +269,62 @@ module.exports = defineConfig({
       },
     },
     {
-      // The analytics plugin's docs call for the Caching Module. Its shipped code
-      // makes no caching calls, so this is defensive.
-      //
-      // `resolve` must be the `@medusajs/medusa/caching` wrapper - it is what carries
-      // the `discoveryPath` the module loader needs.
-      //
-      // `in_memory.enable` turns on the provider built into @medusajs/caching itself
-      // (identifier `cache-memory`) and makes it the default, so no external service
-      // and no `providers` array are needed. Do NOT add `@medusajs/cache-inmemory`
-      // here: that is the deprecated Cache Module's provider - it has no static
-      // `identifier`, so the loader rejects it with "does not have a static
-      // identifier property on its service class".
+      // Use Redis for production caching when configured, while keeping an
+      // in-memory provider for local environments without Redis.
       resolve: '@medusajs/medusa/caching',
-      options: {
-        in_memory: {
-          enable: true,
-        },
-      },
+      options: redisUrl
+        ? {
+            providers: [
+              {
+                resolve: '@medusajs/caching-redis',
+                id: 'caching-redis',
+                is_default: true,
+                options: {
+                  redisUrl: process.env.CACHE_REDIS_URL || redisUrl,
+                },
+              },
+            ],
+          }
+        : {
+            in_memory: {
+              enable: true,
+            },
+          },
     },
+    ...(redisUrl
+      ? [
+          {
+            resolve: '@medusajs/medusa/event-bus-redis',
+            options: {
+              redisUrl: process.env.EVENTS_REDIS_URL || redisUrl,
+              workerOptions: { concurrency: 1 },
+            },
+          },
+          {
+            resolve: '@medusajs/medusa/workflow-engine-redis',
+            options: {
+              redis: {
+                redisUrl: process.env.WE_REDIS_URL || redisUrl,
+              },
+            },
+          },
+          {
+            resolve: '@medusajs/medusa/locking',
+            options: {
+              providers: [
+                {
+                  resolve: '@medusajs/medusa/locking-redis',
+                  id: 'locking-redis',
+                  is_default: true,
+                  options: {
+                    redisUrl: process.env.LOCKING_REDIS_URL || redisUrl,
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      : []),
     {
       // Custom module holding one loyalty-points balance row per customer.
       // Registered as a module (not a plugin) because it ships its own data
