@@ -377,15 +377,6 @@ module.exports = defineConfig({
       },
     },
     {
-      // Contributes an admin widget at `product_category.details.after` and a
-      // `product_category_image` module (migration adds the backing table).
-      // Uploads go through whichever file provider is registered - this repo
-      // uses `@medusajs/file-local` writing to `/static`, so category images
-      // land in the same place as product thumbnails.
-      resolve: '@alphabite/medusa-category-images',
-      options: {},
-    },
-    {
       // Quantity / volume tiered pricing. Registers its own `pricingEngine`
       // module (and the `quantity_prices` table via that module's migrations),
       // so it must NOT also appear under `modules`.
