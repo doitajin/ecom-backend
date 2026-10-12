@@ -16,6 +16,12 @@ const googleAuthEnabled =
   !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET
 const redisUrl = process.env.REDIS_URL
 const databaseUrl = process.env.DATABASE_URL || 'postgres://localhost:5432/medusa'
+const runningFromMedusaBuild =
+  path.basename(process.cwd()) === 'server' &&
+  path.basename(path.dirname(process.cwd())) === '.medusa'
+const smtpProviderPath = runningFromMedusaBuild
+  ? './src/modules/notifications/smtp/index.js'
+  : './src/modules/notifications/smtp/index.ts'
 
 module.exports = defineConfig({
   projectConfig: {
@@ -223,7 +229,7 @@ module.exports = defineConfig({
       options: {
         providers: [
           {
-            resolve: './src/modules/notifications/smtp/index.ts',
+            resolve: smtpProviderPath,
             id: 'smtp',
             options: {
               channels: ['email'],
