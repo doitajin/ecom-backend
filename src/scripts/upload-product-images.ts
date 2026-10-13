@@ -14,7 +14,11 @@
  * the default `access: private`. Safe to re-run.
  */
 import type { ExecArgs } from '@medusajs/framework/types'
-import { ContainerRegistrationKeys, Modules } from '@medusajs/framework/utils'
+import {
+  ContainerRegistrationKeys,
+  MedusaError,
+  Modules,
+} from '@medusajs/framework/utils'
 import { updateProductsWorkflow } from '@medusajs/medusa/core-flows'
 import path from 'node:path'
 
@@ -27,10 +31,21 @@ import { uploadProductImage } from './helpers/upload-product-image'
  * directory and prefixes the key with `private-`. Private files would need a
  * presigned URL with a real provider (S3), so product imagery must be public.
  */
-const isPublicStatic = (url: unknown) =>
-  typeof url === 'string' &&
-  url.includes('/static/') &&
-  !url.includes('/static/private-')
+const isPublicStatic = (url: unknown, backendUrl: string) => {
+  if (
+    typeof url !== 'string' ||
+    !url.includes('/static/') ||
+    url.includes('/static/private-')
+  ) {
+    return false
+  }
+
+  try {
+    return new URL(url, backendUrl).origin === new URL(backendUrl).origin
+  } catch {
+    return false
+  }
+}
 
 /**
  * Recovers the on-disk filename from whatever is stored on the product.
@@ -38,21 +53,34 @@ const isPublicStatic = (url: unknown) =>
  * Handles both shapes this script can encounter:
  *   `/assets/images/product-x.webp`                -> `product-x.webp`
  *   `http://.../static/private-123-product-x.webp` -> `product-x.webp`
+ *   `http://.../static/123-product-x.webp`         -> `product-x.webp`
  */
 const sourceFilename = (thumbnail: string) =>
-  path.basename(thumbnail).replace(/^private-\d+-/, '')
+  path.basename(thumbnail)
+    .replace(/^private-\d+-/, '')
+    .replace(/^\d+-/, '')
 
 export default async function uploadProductImages({ container }: ExecArgs) {
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER)
   const query = container.resolve(ContainerRegistrationKeys.QUERY)
   const fileModule = container.resolve(Modules.FILE)
+  const backendUrl = process.env.MEDUSA_BACKEND_URL
+
+  if (!backendUrl) {
+    throw new MedusaError(
+      MedusaError.Types.INVALID_DATA,
+      'MEDUSA_BACKEND_URL must be set before repairing product images.',
+    )
+  }
 
   const { data: products } = await query.graph({
     entity: 'product',
     fields: ['id', 'handle', 'thumbnail'],
   })
 
-  const stale = products.filter((product) => !isPublicStatic(product.thumbnail))
+  const stale = products.filter(
+    (product) => !isPublicStatic(product.thumbnail, backendUrl),
+  )
 
   if (!stale.length) {
     logger.info('Every product already points at public Medusa storage.')
