@@ -1,0 +1,32 @@
+npm warn Unknown project config "auto-install-peers". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> @dtc/backend@0.0.1 build
+> medusa build
+
+[32minfo[39m:    Using flag MEDUSA_FF_CACHING from environment with value true
+[32minfo[39m:    Using flag MEDUSA_FF_TRANSLATION from environment with value true
+[32minfo[39m:    Generating types...
+[32minfo[39m:    No link to load from D:\gazelle\Demos\ecommerce\perfume-shop\node_modules\@medusajs\draft-order\.medusa\server\src\links. skipped.
+[32minfo[39m:    No link to load from D:\gazelle\Demos\ecommerce\perfume-shop\node_modules\@agilo\medusa-analytics-plugin\.medusa\server\src\links. skipped.
+[32minfo[39m:    Types generated successfully
+[32minfo[39m:    Linting project...
+
+D:\gazelle\Demos\ecommerce\perfume-shop\apps\backend\src\scripts\check-ar-coverage.ts
+  62:9   warning  Throw `MedusaError` instead of a generic `Error`. Use `new MedusaError(MedusaError.Types.X, "...")` so the error maps to the correct HTTP status  @medusajs/use-medusa-error-not-generic-error
+  75:11  warning  Throw `MedusaError` instead of a generic `Error`. Use `new MedusaError(MedusaError.Types.X, "...")` so the error maps to the correct HTTP status  @medusajs/use-medusa-error-not-generic-error
+  82:11  warning  Throw `MedusaError` instead of a generic `Error`. Use `new MedusaError(MedusaError.Types.X, "...")` so the error maps to the correct HTTP status  @medusajs/use-medusa-error-not-generic-error
+
+D:\gazelle\Demos\ecommerce\perfume-shop\apps\backend\src\scripts\fix-omr-amount-units.ts
+  198:11  warning  Throw `MedusaError` instead of a generic `Error`. Use `new MedusaError(MedusaError.Types.X, "...")` so the error maps to the correct HTTP status  @medusajs/use-medusa-error-not-generic-error
+
+D:\gazelle\Demos\ecommerce\perfume-shop\apps\backend\src\scripts\helpers\upload-product-image.ts
+  52:11  warning  Throw `MedusaError` instead of a generic `Error`. Use `new MedusaError(MedusaError.Types.X, "...")` so the error maps to the correct HTTP status  @medusajs/use-medusa-error-not-generic-error
+
+✖ 5 problems (0 errors, 5 warnings)
+[33mwarn[39m:    Lint produced 5 warning(s).
+[32minfo[39m:    Starting build...
+[32minfo[39m:    Compiling backend source...
+[32minfo[39m:    Removing existing ".medusa\server" folder
+[32minfo[39m:    Compiling frontend source...
+[32minfo[39m:    Backend build completed successfully (19.55s)
+[32minfo[39m:    Frontend build completed successfully (63.05s)

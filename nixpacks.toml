@@ -12,6 +12,7 @@ cmds = ["npm install"]
 [phases.build]
 cmds = [
 	"npm run build",
+	"mkdir -p .medusa/server/static && cp -R static/. .medusa/server/static/",
 	"test -f .medusa/server/public/admin/index.html",
 	"cd .medusa/server && npm install --omit=dev",
 ]
