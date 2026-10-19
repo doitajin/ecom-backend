@@ -19,6 +19,7 @@ completeCartWorkflow.hooks.validate(async ({ cart }, { container }) => {
     fields: [
       'id',
       'customer.id',
+      'customer.has_account',
       'metadata',
       'promotions.id',
       'promotions.code',
@@ -34,17 +35,17 @@ completeCartWorkflow.hooks.validate(async ({ cart }, { container }) => {
 
   const loyaltyPromotion = getCartLoyaltyPromotion(cartData)
 
-  if (!loyaltyPromotion) {
-    return
-  }
-
   const customerId = cartData.customer?.id
 
-  if (!customerId) {
+  if (!customerId || !cartData.customer?.has_account) {
     throw new MedusaError(
       MedusaError.Types.INVALID_DATA,
-      'A registered customer is required to redeem loyalty points.'
+      'A registered customer account is required to place an order.'
     )
+  }
+
+  if (!loyaltyPromotion) {
+    return
   }
 
   const points = await loyaltyModuleService.getPoints(customerId)

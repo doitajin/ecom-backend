@@ -3,6 +3,7 @@ npm warn Unknown project config "auto-install-peers". This will stop working in 
 > @dtc/backend@0.0.1 build
 > medusa build
 
+[32minfo[39m:    redisUrl not found. A fake redis instance will be used.
 [32minfo[39m:    Using flag MEDUSA_FF_CACHING from environment with value true
 [32minfo[39m:    Using flag MEDUSA_FF_TRANSLATION from environment with value true
 [32minfo[39m:    Generating types...
@@ -19,14 +20,17 @@ D:\gazelle\Demos\ecommerce\perfume-shop\apps\backend\src\scripts\check-ar-covera
 D:\gazelle\Demos\ecommerce\perfume-shop\apps\backend\src\scripts\fix-omr-amount-units.ts
   198:11  warning  Throw `MedusaError` instead of a generic `Error`. Use `new MedusaError(MedusaError.Types.X, "...")` so the error maps to the correct HTTP status  @medusajs/use-medusa-error-not-generic-error
 
+D:\gazelle\Demos\ecommerce\perfume-shop\apps\backend\src\scripts\fix-pricing-data.ts
+  49:11  warning  Throw `MedusaError` instead of a generic `Error`. Use `new MedusaError(MedusaError.Types.X, "...")` so the error maps to the correct HTTP status  @medusajs/use-medusa-error-not-generic-error
+
 D:\gazelle\Demos\ecommerce\perfume-shop\apps\backend\src\scripts\helpers\upload-product-image.ts
   52:11  warning  Throw `MedusaError` instead of a generic `Error`. Use `new MedusaError(MedusaError.Types.X, "...")` so the error maps to the correct HTTP status  @medusajs/use-medusa-error-not-generic-error
 
-✖ 5 problems (0 errors, 5 warnings)
-[33mwarn[39m:    Lint produced 5 warning(s).
+✖ 6 problems (0 errors, 6 warnings)
+[33mwarn[39m:    Lint produced 6 warning(s).
 [32minfo[39m:    Starting build...
 [32minfo[39m:    Compiling backend source...
 [32minfo[39m:    Removing existing ".medusa\server" folder
 [32minfo[39m:    Compiling frontend source...
-[32minfo[39m:    Backend build completed successfully (19.55s)
-[32minfo[39m:    Frontend build completed successfully (63.05s)
+[32minfo[39m:    Backend build completed successfully (35.96s)
+[32minfo[39m:    Frontend build completed successfully (103.62s)
